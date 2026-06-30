@@ -39,6 +39,31 @@ const slides = computed<Slide[]>(() =>
 const current = ref(0)
 const root = ref<HTMLElement | null>(null)
 let timer: ReturnType<typeof setInterval> | null = null
+let startDelay: ReturnType<typeof setTimeout> | null = null
+
+// 仅首图随初始 DOM 渲染并参与 LCP；其余图懒挂载，切到时才进 DOM，
+// 避免初始加载窗口里和首图抢带宽、以及未切换的大图提前成为 LCP 候选。
+const loaded = ref(new Set<number>([0]))
+function ensureLoaded(i: number) {
+  if (loaded.value.has(i)) return
+  loaded.value.add(i)
+  loaded.value = new Set(loaded.value)
+}
+
+// 用 preload 让首图尽早抢跑，并交给预加载扫描器（优先级高于 hydration）
+const firstImg = slideMeta[0].image
+useHead({
+  link: [
+    {
+      rel: 'preload',
+      as: 'image',
+      href: img(firstImg, 1600),
+      imagesrcset: `${img(firstImg, 1200)} 1200w, ${img(firstImg, 1600)} 1600w, ${img(firstImg, 2000)} 2000w`,
+      imagesizes: '100vw',
+      fetchpriority: 'high',
+    },
+  ],
+})
 
 function animateIn() {
   if (!root.value) return
@@ -60,6 +85,7 @@ function animateIn() {
 
 function go(i: number) {
   current.value = (i + slides.value.length) % slides.value.length
+  ensureLoaded(current.value)
   nextTick(animateIn)
 }
 function next() {
@@ -78,9 +104,14 @@ function stop() {
 
 onMounted(() => {
   animateIn()
-  start()
+  // 延迟启动自动轮播：给首图留出稳定成为 LCP 的测量窗口，
+  // 避免切图带来的新全屏大图把 LCP 时间戳不断往后推。
+  startDelay = setTimeout(start, 3000)
 })
-onBeforeUnmount(stop)
+onBeforeUnmount(() => {
+  stop()
+  if (startDelay) clearTimeout(startDelay)
+})
 </script>
 
 <template>
@@ -93,9 +124,10 @@ onBeforeUnmount(stop)
       :style="{ background: s.bg }"
     >
       <img
+        v-if="loaded.has(i)"
         class="slide__img"
-        :src="img(s.image, 2400)"
-        :srcset="`${img(s.image, 1200)} 1200w, ${img(s.image, 2000)} 2000w, ${img(s.image, 2400)} 2400w`"
+        :src="img(s.image, 1600)"
+        :srcset="`${img(s.image, 1200)} 1200w, ${img(s.image, 1600)} 1600w, ${img(s.image, 2000)} 2000w`"
         sizes="100vw"
         :alt="s.title"
         :loading="i === 0 ? 'eager' : 'lazy'"
