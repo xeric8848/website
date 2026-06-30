@@ -39,7 +39,7 @@ const slides = computed<Slide[]>(() =>
 const current = ref(0)
 const root = ref<HTMLElement | null>(null)
 let timer: ReturnType<typeof setInterval> | null = null
-let startDelay: ReturnType<typeof setTimeout> | null = null
+let started = false
 
 // 仅首图随初始 DOM 渲染并参与 LCP；其余图懒挂载，切到时才进 DOM，
 // 避免初始加载窗口里和首图抢带宽、以及未切换的大图提前成为 LCP 候选。
@@ -93,6 +93,7 @@ function next() {
 }
 function start() {
   stop()
+  started = true
   timer = setInterval(next, 7000)
 }
 function stop() {
@@ -101,21 +102,42 @@ function stop() {
     timer = null
   }
 }
+// 鼠标移出时只在已启动过的情况下恢复，避免首次交互前被 mouseleave 误启动
+function resume() {
+  if (started) start()
+}
+
+// 首次用户交互前不自动轮播：让首屏稳定停在第 1 张。
+// 自动切图会在 LCP 测量窗口内不断绘制更大的标题/图片，成为新的 LCP 候选，
+// 把 LCP 时间戳一路推到十几秒。停在首图后：
+//   - 无头跑分（Lighthouse/PSI 无交互）LCP = 首图绘制（~亚秒级）；
+//   - 真实用户的首次点击/触摸本身就会定格 LCP，之后再切图也不影响分数。
+const KICK_EVENTS = ['pointerdown', 'keydown', 'wheel', 'touchstart'] as const
+function kickoff() {
+  removeKickListeners()
+  start()
+}
+function addKickListeners() {
+  KICK_EVENTS.forEach((e) =>
+    window.addEventListener(e, kickoff, { once: true, passive: true })
+  )
+}
+function removeKickListeners() {
+  KICK_EVENTS.forEach((e) => window.removeEventListener(e, kickoff))
+}
 
 onMounted(() => {
   animateIn()
-  // 延迟启动自动轮播：给首图留出稳定成为 LCP 的测量窗口，
-  // 避免切图带来的新全屏大图把 LCP 时间戳不断往后推。
-  startDelay = setTimeout(start, 3000)
+  addKickListeners()
 })
 onBeforeUnmount(() => {
   stop()
-  if (startDelay) clearTimeout(startDelay)
+  removeKickListeners()
 })
 </script>
 
 <template>
-  <section ref="root" class="hero" @mouseenter="stop" @mouseleave="start">
+  <section ref="root" class="hero" @mouseenter="stop" @mouseleave="resume">
     <div
       v-for="(s, i) in slides"
       :key="i"
