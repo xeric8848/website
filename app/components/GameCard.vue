@@ -24,7 +24,7 @@ const img = (id: string, w: number) =>
       />
       <span v-if="badge" class="game__badge">{{ badge }}</span>
       <div class="game__shine" />
-      <button class="game__play" aria-label="试玩">▶</button>
+      <button class="game__play" :aria-label="$t('game.play')">▶</button>
     </div>
     <div class="game__body">
       <div class="game__top">
@@ -34,7 +34,7 @@ const img = (id: string, w: number) =>
       <h3 class="game__title">{{ title }}</h3>
       <div class="game__bottom">
         <span class="game__price">{{ price }}</span>
-        <span class="game__cta">立即游玩 →</span>
+        <span class="game__cta">{{ $t('game.play') }}</span>
       </div>
     </div>
   </article>

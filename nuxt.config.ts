@@ -2,11 +2,28 @@
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
+  modules: ['@nuxtjs/i18n'],
   css: ['~/assets/css/main.css'],
+  i18n: {
+    // 纯前端切换，不改 URL
+    strategy: 'no_prefix',
+    defaultLocale: 'zh',
+    locales: [
+      { code: 'zh', language: 'zh-CN', name: '中文', file: 'zh.json' },
+      { code: 'en', language: 'en-US', name: 'English', file: 'en.json' },
+    ],
+    // 首次进入按浏览器语言自动检测，并把选择记到 cookie
+    detectBrowserLanguage: {
+      useCookie: true,
+      cookieKey: 'nexus_lang',
+      redirectOn: 'no prefix',
+      fallbackLocale: 'zh',
+    },
+    bundle: { optimizeTranslationDirective: false },
+  },
   app: {
     head: {
       title: 'NEXUS · 次世代云游戏平台',
-      htmlAttrs: { lang: 'zh-CN' },
       meta: [
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },

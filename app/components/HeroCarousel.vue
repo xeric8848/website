@@ -13,44 +13,28 @@ interface Slide {
   bg: string
 }
 
+const { t, tm, rt } = useI18n()
+
 const img = (id: string, w: number) =>
   `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&q=80&w=${w}`
 
-const slides: Slide[] = [
-  {
-    kicker: '本周热门 · 独家首发',
-    title: '霓虹深渊',
-    highlight: 'NEON ABYSS',
-    desc: '潜入永不眠的赛博都市，在子弹与霓虹之间杀出一条生路。Roguelike × 弹幕射击，每一局都是全新的冒险。',
-    cta: '免费开玩',
-    tags: ['动作射击', 'Roguelike', '多人联机'],
-    rating: '9.6',
-    image: '1538481199705-c710c4e965fc',
-    bg: 'linear-gradient(135deg, #1a0b2e, #07060f)',
-  },
-  {
-    kicker: '年度巨制 · 开放世界',
-    title: '星界裂痕',
-    highlight: 'ASTRAL RIFT',
-    desc: '横跨七大星系的史诗级开放世界。驾驶你的飞船，在星海间贸易、战斗、探索未知文明的遗迹。',
-    cta: '进入星海',
-    tags: ['开放世界', 'RPG', '太空'],
-    rating: '9.8',
-    image: '1593305841991-05c297ba4575',
-    bg: 'linear-gradient(135deg, #0b1a2e, #07060f)',
-  },
-  {
-    kicker: '电竞主推 · 全球公测',
-    title: '机甲先锋',
-    highlight: 'MECH VANGUARD',
-    desc: '5v5 团队竞技，操控独一无二的机甲战将，在毫秒之间决出胜负。登顶全球排行榜，赢取百万奖池。',
-    cta: '加入战场',
-    tags: ['MOBA', '电竞', '团队竞技'],
-    rating: '9.4',
-    image: '1511512578047-dfb367046420',
-    bg: 'linear-gradient(135deg, #2e0b1f, #07060f)',
-  },
+// 非文案元数据保留在代码里，文案从 i18n 按索引取
+const slideMeta = [
+  { highlight: 'NEON ABYSS', rating: '9.6', image: '1538481199705-c710c4e965fc', bg: 'linear-gradient(135deg, #1a0b2e, #07060f)' },
+  { highlight: 'ASTRAL RIFT', rating: '9.8', image: '1593305841991-05c297ba4575', bg: 'linear-gradient(135deg, #0b1a2e, #07060f)' },
+  { highlight: 'MECH VANGUARD', rating: '9.4', image: '1511512578047-dfb367046420', bg: 'linear-gradient(135deg, #2e0b1f, #07060f)' },
 ]
+
+const slides = computed<Slide[]>(() =>
+  slideMeta.map((m, i) => ({
+    ...m,
+    kicker: t(`hero.slides.${i}.kicker`),
+    title: t(`hero.slides.${i}.title`),
+    desc: t(`hero.slides.${i}.desc`),
+    cta: t(`hero.slides.${i}.cta`),
+    tags: (tm(`hero.slides.${i}.tags`) as unknown[]).map((m) => rt(m as never)),
+  }))
+)
 
 const current = ref(0)
 const root = ref<HTMLElement | null>(null)
@@ -75,7 +59,7 @@ function animateIn() {
 }
 
 function go(i: number) {
-  current.value = (i + slides.length) % slides.length
+  current.value = (i + slides.value.length) % slides.value.length
   nextTick(animateIn)
 }
 function next() {
@@ -133,7 +117,7 @@ onBeforeUnmount(stop)
         </div>
         <div class="actions anim">
           <button v-magnetic class="btn btn-primary">{{ s.cta }} ▶</button>
-          <NuxtLink to="/about" class="btn btn-ghost">了解平台</NuxtLink>
+          <NuxtLink to="/about" class="btn btn-ghost">{{ $t('hero.learnMore') }}</NuxtLink>
         </div>
       </div>
     </div>

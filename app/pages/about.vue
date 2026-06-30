@@ -1,30 +1,34 @@
 <script setup lang="ts">
-useHead({ title: '关于我们 · NEXUS 游戏平台' })
+const { t, tm, rt } = useI18n()
+useHead(() => ({ title: t('about.title') }))
 
 const { reveal } = useReveal()
 const pageRoot = ref<HTMLElement | null>(null)
 
-const values = [
-  { icon: '🎮', title: '玩家第一', desc: '每一个决策都从「这对玩家更好吗」出发。' },
-  { icon: '⚡', title: '极致体验', desc: '把延迟压到极限，把画质拉到顶点。' },
-  { icon: '🌍', title: '开放共创', desc: '与开发者共建，让好游戏被更多人看见。' },
-  { icon: '🛡️', title: '公平安全', desc: '反作弊与隐私保护，守护纯净的游戏环境。' },
-]
+const valueIcons = ['🎮', '⚡', '🌍', '🛡️']
+const values = computed(() =>
+  valueIcons.map((icon, i) => ({
+    icon,
+    title: t(`about.values.items.${i}.title`),
+    desc: t(`about.values.items.${i}.desc`),
+  }))
+)
 
-const team = [
-  { name: '雷恩', role: '创始人 & CEO', initial: 'R' },
-  { name: '凯拉', role: 'CTO · 云架构负责人', initial: 'K' },
-  { name: '马克', role: '游戏生态总监', initial: 'M' },
-  { name: '艾拉', role: '社区与电竞负责人', initial: 'A' },
-]
+const teamInitials = ['R', 'K', 'M', 'A']
+const team = computed(() =>
+  teamInitials.map((initial, i) => ({
+    initial,
+    name: t(`about.team.members.${i}.name`),
+    role: t(`about.team.members.${i}.role`),
+  }))
+)
 
-const timeline = [
-  { year: '2018', text: '团队在车库里写下第一行串流代码，NEXUS 诞生。' },
-  { year: '2020', text: '云游戏 Beta 上线，首批 10 万玩家涌入。' },
-  { year: '2022', text: '上线 NEXUS+ 会员，游戏库突破 2000 款。' },
-  { year: '2024', text: '举办首届 NEXUS 全球电竞总决赛，百万奖池。' },
-  { year: '2026', text: '玩家突破 1.2 亿，覆盖全球 30+ 边缘节点。' },
-]
+const timeline = computed(() =>
+  (tm('about.timeline.items') as { year: unknown; text: unknown }[]).map((it) => ({
+    year: rt(it.year as never),
+    text: rt(it.text as never),
+  }))
+)
 
 onMounted(() => reveal(pageRoot.value))
 </script>
@@ -35,13 +39,12 @@ onMounted(() => reveal(pageRoot.value))
       <ParticleField :density="55" />
       <div class="phero__bg" />
       <div class="container">
-        <span class="eyebrow reveal">关于 NEXUS</span>
+        <span class="eyebrow reveal">{{ $t('about.hero.eyebrow') }}</span>
         <h1 class="phero__title reveal" data-delay="0.05">
-          我们为<span class="glitch gradient-text" data-text="玩家">玩家</span>而生
+          {{ $t('about.hero.titlePre') }}<span class="glitch gradient-text" :data-text="$t('about.hero.titleHl')">{{ $t('about.hero.titleHl') }}</span>{{ $t('about.hero.titleSuf') }}
         </h1>
         <p class="phero__sub reveal" data-delay="0.1">
-          NEXUS 是一群硬核玩家创立的云游戏平台。我们相信，伟大的游戏不该被硬件、下载和地域所束缚——
-          只要你想玩，随时随地，秒开即玩。
+          {{ $t('about.hero.sub') }}
         </p>
       </div>
     </section>
@@ -49,25 +52,25 @@ onMounted(() => reveal(pageRoot.value))
     <section class="section">
       <div class="container split">
         <div class="split__text">
-          <span class="eyebrow reveal">我们的使命</span>
+          <span class="eyebrow reveal">{{ $t('about.mission.eyebrow') }}</span>
           <h2 class="section-title reveal" data-delay="0.05">
-            让每个人，<br />都能玩到想玩的游戏
+            {{ $t('about.mission.titleLine1') }}<br />{{ $t('about.mission.titleLine2') }}
           </h2>
           <p class="section-sub reveal" data-delay="0.1">
-            曾经，畅玩 3A 大作意味着昂贵的硬件、漫长的下载和反复的更新。我们用云端算力打破了这一切。
+            {{ $t('about.mission.p1') }}
           </p>
           <p class="section-sub reveal" data-delay="0.15">
-            如今，一部手机就是你的游戏主机。这是属于所有玩家的游戏新纪元。
+            {{ $t('about.mission.p2') }}
           </p>
         </div>
         <div class="split__visual reveal" data-from="right">
           <div class="visual-card" v-tilt="10">
             <img
               src="https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&q=75&w=900"
-              alt="游戏团队"
+              :alt="$t('about.mission.imgAlt')"
               loading="lazy"
             />
-            <div class="visual-badge">自 2018 · 全球团队</div>
+            <div class="visual-badge">{{ $t('about.mission.badge') }}</div>
           </div>
         </div>
       </div>
@@ -76,13 +79,13 @@ onMounted(() => reveal(pageRoot.value))
     <section class="section values-section">
       <div class="container">
         <div class="head">
-          <span class="eyebrow reveal">价值观</span>
-          <h2 class="section-title reveal" data-delay="0.05">支撑我们的四个信念</h2>
+          <span class="eyebrow reveal">{{ $t('about.values.eyebrow') }}</span>
+          <h2 class="section-title reveal" data-delay="0.05">{{ $t('about.values.title') }}</h2>
         </div>
         <div class="values">
           <div
             v-for="(v, i) in values"
-            :key="v.title"
+            :key="i"
             v-tilt="8"
             class="value neon-card reveal"
             data-from="scale"
@@ -100,13 +103,13 @@ onMounted(() => reveal(pageRoot.value))
     <section class="section">
       <div class="container">
         <div class="head">
-          <span class="eyebrow reveal">发展历程</span>
-          <h2 class="section-title reveal" data-delay="0.05">从车库到全球</h2>
+          <span class="eyebrow reveal">{{ $t('about.timeline.eyebrow') }}</span>
+          <h2 class="section-title reveal" data-delay="0.05">{{ $t('about.timeline.title') }}</h2>
         </div>
         <div class="timeline">
           <div
             v-for="(t, i) in timeline"
-            :key="t.year"
+            :key="i"
             class="tl-item reveal"
             data-from="left"
             :data-delay="0.05 * i"
@@ -122,13 +125,13 @@ onMounted(() => reveal(pageRoot.value))
     <section class="section team-section">
       <div class="container">
         <div class="head">
-          <span class="eyebrow reveal">核心团队</span>
-          <h2 class="section-title reveal" data-delay="0.05">带队的人</h2>
+          <span class="eyebrow reveal">{{ $t('about.team.eyebrow') }}</span>
+          <h2 class="section-title reveal" data-delay="0.05">{{ $t('about.team.title') }}</h2>
         </div>
         <div class="team">
           <div
             v-for="(m, i) in team"
-            :key="m.name"
+            :key="i"
             v-tilt="10"
             class="member neon-card reveal"
             data-from="scale"

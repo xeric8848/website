@@ -2,41 +2,64 @@
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
+const { t, tm, rt } = useI18n()
 const { reveal } = useReveal()
 const pageRoot = ref<HTMLElement | null>(null)
 const statsRoot = ref<HTMLElement | null>(null)
 
-const games = [
-  { title: '霓虹深渊', genre: '动作射击', rating: '9.6', price: '免费', image: '1538481199705-c710c4e965fc', badge: '热门' },
-  { title: '星界裂痕', genre: '开放世界 RPG', rating: '9.8', price: '￥199', image: '1593305841991-05c297ba4575', badge: '首发' },
-  { title: '机甲先锋', genre: 'MOBA 竞技', rating: '9.4', price: '免费', image: '1511512578047-dfb367046420' },
-  { title: '极速回廊', genre: '竞速', rating: '9.1', price: '￥98', image: '1547394765-185e1e68f34e' },
-  { title: '幽影森林', genre: '冒险解谜', rating: '9.3', price: '￥68', image: '1542751110-97427bbecf20', badge: '-40%' },
-  { title: '王座之争', genre: '策略', rating: '9.0', price: '免费', image: '1542038784456-1ea8e935640e' },
+// 非文案元数据保留在代码里，文案从 i18n 按索引取
+const gameMeta = [
+  { rating: '9.6', image: '1538481199705-c710c4e965fc' },
+  { rating: '9.8', image: '1593305841991-05c297ba4575' },
+  { rating: '9.4', image: '1511512578047-dfb367046420' },
+  { rating: '9.1', image: '1547394765-185e1e68f34e' },
+  { rating: '9.3', image: '1542751110-97427bbecf20' },
+  { rating: '9.0', image: '1542038784456-1ea8e935640e' },
 ]
+const games = computed(() =>
+  gameMeta.map((m, i) => ({
+    ...m,
+    title: t(`home.games.${i}.title`),
+    genre: t(`home.games.${i}.genre`),
+    price: t(`home.games.${i}.price`),
+    badge: t(`home.games.${i}.badge`) || undefined,
+  }))
+)
 
-const genres = [
-  { name: '动作射击', count: '1,280+', icon: '🔫', image: '1552820728-8b83bb6b773f' },
-  { name: '角色扮演', count: '960+', icon: '⚔️', image: '1486572788966-cfd3df1f5b42' },
-  { name: '竞速驾驶', count: '420+', icon: '🏎️', image: '1547394765-185e1e68f34e' },
-  { name: '策略经营', count: '730+', icon: '♟️', image: '1611996575749-79a3a250f948' },
+const genreMeta = [
+  { icon: '🔫', image: '1552820728-8b83bb6b773f' },
+  { icon: '⚔️', image: '1486572788966-cfd3df1f5b42' },
+  { icon: '🏎️', image: '1547394765-185e1e68f34e' },
+  { icon: '♟️', image: '1611996575749-79a3a250f948' },
 ]
+const genres = computed(() =>
+  genreMeta.map((m, i) => ({
+    ...m,
+    name: t(`home.genres.${i}.name`),
+    count: t(`home.genres.${i}.count`),
+  }))
+)
 
-const stats = [
-  { value: 8000, suffix: '+', label: '游戏总量' },
-  { value: 120, suffix: 'M', label: '注册玩家' },
-  { value: 3.5, suffix: 'M', label: '同时在线', decimals: 1 },
-  { value: 99.9, suffix: '%', label: '云端稳定性', decimals: 1 },
+const statMeta = [
+  { value: 8000, suffix: '+', decimals: 0 },
+  { value: 120, suffix: 'M', decimals: 0 },
+  { value: 3.5, suffix: 'M', decimals: 1 },
+  { value: 99.9, suffix: '%', decimals: 1 },
 ]
+const stats = computed(() =>
+  statMeta.map((m, i) => ({ ...m, label: t(`home.stats.${i}.label`) }))
+)
 
-const features = [
-  { icon: '☁️', title: '云端即玩', desc: '无需下载，无需高配置，点开即玩 3A 大作，最高 4K 120 帧串流。' },
-  { icon: '🔄', title: '跨设备接力', desc: 'PC、手机、平板、电视无缝切换，进度云端同步，随时接着玩。' },
-  { icon: '🏆', title: '成就与排行', desc: '全平台统一成就系统，登顶全球排行榜，赢取专属奖励与徽章。' },
-  { icon: '👥', title: '社区与开黑', desc: '内置语音、组队、直播与好友动态，和百万玩家一起开黑。' },
-]
+const featMeta = [{ icon: '☁️' }, { icon: '🔄' }, { icon: '🏆' }, { icon: '👥' }]
+const features = computed(() =>
+  featMeta.map((m, i) => ({
+    ...m,
+    title: t(`home.feat.items.${i}.title`),
+    desc: t(`home.feat.items.${i}.desc`),
+  }))
+)
 
-const tickerGames = ['霓虹深渊', '星界裂痕', '机甲先锋', '极速回廊', '幽影森林', '王座之争', '深空猎手', '像素勇者']
+const tickerGames = computed(() => (tm('home.ticker') as unknown[]).map((m) => rt(m as never)))
 
 function runStatsAnim() {
   if (!statsRoot.value) return
@@ -75,18 +98,18 @@ onMounted(() => {
       <div class="container">
         <div class="head">
           <div>
-            <span class="eyebrow reveal">热门游戏</span>
+            <span class="eyebrow reveal">{{ $t('home.popular.eyebrow') }}</span>
             <h2 class="section-title reveal" data-delay="0.05">
-              本周<span class="gradient-text">玩家都在玩</span>
+              {{ $t('home.popular.titlePre') }}<span class="gradient-text">{{ $t('home.popular.titleHl') }}</span>
             </h2>
           </div>
-          <NuxtLink to="/" class="head__more reveal" data-delay="0.1">查看全部榜单 →</NuxtLink>
+          <NuxtLink to="/" class="head__more reveal" data-delay="0.1">{{ $t('home.popular.more') }}</NuxtLink>
         </div>
 
         <div class="games-grid">
           <div
             v-for="(g, i) in games"
-            :key="g.title"
+            :key="i"
             class="reveal"
             data-from="scale"
             :data-delay="0.05 * i"
@@ -102,16 +125,16 @@ onMounted(() => {
       <div class="container">
         <div class="head">
           <div>
-            <span class="eyebrow reveal">海量品类</span>
+            <span class="eyebrow reveal">{{ $t('home.genresSection.eyebrow') }}</span>
             <h2 class="section-title reveal" data-delay="0.05">
-              总有一款<span class="gradient-text">为你而生</span>
+              {{ $t('home.genresSection.titlePre') }}<span class="gradient-text">{{ $t('home.genresSection.titleHl') }}</span>
             </h2>
           </div>
         </div>
         <div class="genres">
           <NuxtLink
             v-for="(g, i) in genres"
-            :key="g.name"
+            :key="i"
             to="/"
             v-tilt="6"
             class="genre reveal"
@@ -123,7 +146,7 @@ onMounted(() => {
             <div class="genre__body">
               <span class="genre__icon">{{ g.icon }}</span>
               <h3>{{ g.name }}</h3>
-              <span class="genre__count">{{ g.count }} 款游戏</span>
+              <span class="genre__count">{{ $t('home.genreCount', { count: g.count }) }}</span>
             </div>
           </NuxtLink>
         </div>
@@ -134,7 +157,7 @@ onMounted(() => {
     <section ref="statsRoot" class="stats-section">
       <ParticleField :density="40" />
       <div class="container stats">
-        <div v-for="s in stats" :key="s.label" class="stat reveal" data-from="scale">
+        <div v-for="(s, i) in stats" :key="i" class="stat reveal" data-from="scale">
           <div class="stat__value">
             <span class="stat__num" :data-value="s.value" :data-decimals="s.decimals ?? 0">0</span>
             <span class="stat__suffix">{{ s.suffix }}</span>
@@ -148,17 +171,17 @@ onMounted(() => {
     <section class="section feat-section">
       <div class="container feat">
         <div class="feat__text">
-          <span class="eyebrow reveal">为何选择 NEXUS</span>
+          <span class="eyebrow reveal">{{ $t('home.feat.eyebrow') }}</span>
           <h2 class="section-title reveal" data-delay="0.05">
-            把游戏厅<br /><span class="gradient-text">装进你的口袋</span>
+            {{ $t('home.feat.titlePre') }}<br /><span class="gradient-text">{{ $t('home.feat.titleHl') }}</span>
           </h2>
           <p class="section-sub reveal" data-delay="0.1">
-            强大的云端算力，让任何设备都能秒变游戏主机。告别下载、更新与硬件焦虑，纯粹享受游戏本身。
+            {{ $t('home.feat.sub') }}
           </p>
           <div class="feat__list">
             <div
               v-for="(f, i) in features"
-              :key="f.title"
+              :key="i"
               class="feat__item reveal"
               data-from="left"
               :data-delay="0.06 * i"
@@ -175,13 +198,13 @@ onMounted(() => {
           <div class="feat__device" data-parallax="-50">
             <img
               src="https://images.unsplash.com/photo-1614680376593-902f74cf0d41?auto=format&fit=crop&q=75&w=900"
-              alt="云游戏"
+              :alt="$t('home.feat.imgAlt')"
               loading="lazy"
             />
             <div class="feat__device-glow" />
           </div>
-          <div class="feat__chip feat__chip--1" data-parallax="40">4K · 120FPS</div>
-          <div class="feat__chip feat__chip--2" data-parallax="-30">延迟 &lt; 15ms</div>
+          <div class="feat__chip feat__chip--1" data-parallax="40">{{ $t('home.feat.chip1') }}</div>
+          <div class="feat__chip feat__chip--2" data-parallax="-30">{{ $t('home.feat.chip2') }}</div>
         </div>
       </div>
     </section>
@@ -192,16 +215,16 @@ onMounted(() => {
         <div class="cta reveal" data-from="scale">
           <ParticleField :density="50" />
           <div class="cta__inner">
-            <span class="tag" style="margin-bottom: 16px">NEXUS+ 会员</span>
-            <h2>加入 <span class="gradient-text">NEXUS+</span>，畅玩整个游戏宇宙</h2>
-            <p>每月新增数十款大作，云端畅玩、专属折扣、抢先体验，一价全包。</p>
+            <span class="tag" style="margin-bottom: 16px">{{ $t('home.cta.tag') }}</span>
+            <h2>{{ $t('home.cta.titlePre') }} <span class="gradient-text">NEXUS+</span>{{ $t('home.cta.titleSuf') }}</h2>
+            <p>{{ $t('home.cta.sub') }}</p>
             <div class="cta__price">
               <span class="cta__num">￥38</span>
-              <span class="cta__unit">/ 月起</span>
+              <span class="cta__unit">{{ $t('home.cta.priceUnit') }}</span>
             </div>
             <div class="cta__actions">
-              <button v-magnetic class="btn btn-primary">免费试用 7 天 ▶</button>
-              <NuxtLink to="/contact" class="btn btn-ghost">联系我们</NuxtLink>
+              <button v-magnetic class="btn btn-primary">{{ $t('home.cta.trial') }}</button>
+              <NuxtLink to="/contact" class="btn btn-ghost">{{ $t('home.cta.contact') }}</NuxtLink>
             </div>
           </div>
         </div>

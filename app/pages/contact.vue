@@ -1,5 +1,6 @@
 <script setup lang="ts">
-useHead({ title: '联系我们 · NEXUS 游戏平台' })
+const { t, tm, rt } = useI18n()
+useHead(() => ({ title: t('contact.title') }))
 
 const { reveal } = useReveal()
 const pageRoot = ref<HTMLElement | null>(null)
@@ -7,24 +8,34 @@ const pageRoot = ref<HTMLElement | null>(null)
 const form = reactive({
   name: '',
   contact: '',
-  topic: '玩家支持',
+  topic: 0, // 用索引存储，切换语言不影响选中态
   message: '',
 })
-const topics = ['玩家支持', '商务合作', '开发者入驻', '电竞赛事', '其他']
+const topics = computed(() => (tm('contact.topics') as unknown[]).map((m) => rt(m as never)))
 const submitted = ref(false)
 const error = ref('')
 
-const channels = [
-  { icon: '🎧', label: '玩家客服', value: 'support@nexus.gg', href: 'mailto:support@nexus.gg', note: '7×24 在线' },
-  { icon: '🤝', label: '商务合作', value: 'partners@nexus.gg', href: 'mailto:partners@nexus.gg', note: '品牌 / 渠道' },
-  { icon: '🕹️', label: '开发者', value: 'dev@nexus.gg', href: 'mailto:dev@nexus.gg', note: '游戏上架' },
-  { icon: '💬', label: '社区', value: 'NEXUS 官方 Discord', href: null, note: '120 万玩家' },
+// 图标/邮箱/链接等非文案信息保留在代码里（邮箱含 @，不能放进 i18n 消息）
+const channelMeta = [
+  { icon: '🎧', href: 'mailto:support@nexus.gg', value: 'support@nexus.gg' },
+  { icon: '🤝', href: 'mailto:partners@nexus.gg', value: 'partners@nexus.gg' },
+  { icon: '🕹️', href: 'mailto:dev@nexus.gg', value: 'dev@nexus.gg' },
+  { icon: '💬', href: null as string | null, value: '' },
 ]
+const channels = computed(() =>
+  channelMeta.map((m, i) => ({
+    ...m,
+    // 社区频道(无邮箱)的展示文案随语言变化
+    value: m.value || t('contact.discord'),
+    label: t(`contact.channels.${i}.label`),
+    note: t(`contact.channels.${i}.note`),
+  }))
+)
 
 function submit() {
   error.value = ''
   if (!form.name.trim() || !form.contact.trim() || !form.message.trim()) {
-    error.value = '请填写昵称、联系方式和留言内容。'
+    error.value = t('contact.form.validation')
     return
   }
   submitted.value = true
@@ -39,12 +50,12 @@ onMounted(() => reveal(pageRoot.value))
       <ParticleField :density="55" />
       <div class="phero__bg" />
       <div class="container">
-        <span class="eyebrow reveal">联系我们</span>
+        <span class="eyebrow reveal">{{ $t('contact.hero.eyebrow') }}</span>
         <h1 class="phero__title reveal" data-delay="0.05">
-          随时<span class="gradient-text">为你在线</span>
+          {{ $t('contact.hero.titlePre') }}<span class="gradient-text">{{ $t('contact.hero.titleHl') }}</span>
         </h1>
         <p class="phero__sub reveal" data-delay="0.1">
-          无论是游戏问题、商务合作还是想把你的游戏带上 NEXUS，留下信息，我们会尽快回复你。
+          {{ $t('contact.hero.sub') }}
         </p>
       </div>
     </section>
@@ -53,57 +64,57 @@ onMounted(() => reveal(pageRoot.value))
       <div class="container grid">
         <div class="form-card glass reveal" data-from="left">
           <template v-if="!submitted">
-            <h2>给我们留言</h2>
-            <p class="form-card__hint">带 * 为必填项</p>
+            <h2>{{ $t('contact.form.title') }}</h2>
+            <p class="form-card__hint">{{ $t('contact.form.hint') }}</p>
 
             <div class="field-row">
               <label class="field">
-                <span>昵称 *</span>
-                <input v-model="form.name" type="text" placeholder="你的游戏 ID / 称呼" />
+                <span>{{ $t('contact.form.name') }}</span>
+                <input v-model="form.name" type="text" :placeholder="$t('contact.form.namePlaceholder')" />
               </label>
               <label class="field">
-                <span>联系方式 *</span>
-                <input v-model="form.contact" type="text" placeholder="邮箱 / 手机 / Discord" />
+                <span>{{ $t('contact.form.contact') }}</span>
+                <input v-model="form.contact" type="text" :placeholder="$t('contact.form.contactPlaceholder')" />
               </label>
             </div>
 
             <label class="field">
-              <span>咨询类型</span>
+              <span>{{ $t('contact.form.topic') }}</span>
               <div class="chips">
                 <button
-                  v-for="t in topics"
-                  :key="t"
+                  v-for="(tp, i) in topics"
+                  :key="i"
                   type="button"
                   class="chip"
-                  :class="{ active: form.topic === t }"
-                  @click="form.topic = t"
+                  :class="{ active: form.topic === i }"
+                  @click="form.topic = i"
                 >
-                  {{ t }}
+                  {{ tp }}
                 </button>
               </div>
             </label>
 
             <label class="field">
-              <span>留言 *</span>
-              <textarea v-model="form.message" rows="4" placeholder="简单描述你的问题或想法…" />
+              <span>{{ $t('contact.form.message') }}</span>
+              <textarea v-model="form.message" rows="4" :placeholder="$t('contact.form.messagePlaceholder')" />
             </label>
 
             <p v-if="error" class="error">{{ error }}</p>
-            <button v-magnetic class="btn btn-primary submit" @click="submit">发送消息 ▶</button>
+            <button v-magnetic class="btn btn-primary submit" @click="submit">{{ $t('contact.form.submit') }}</button>
           </template>
 
           <div v-else class="success">
             <div class="success__icon">✓</div>
-            <h2>已收到！</h2>
-            <p>感谢 {{ form.name }}，我们的团队会尽快与你联系。</p>
-            <button class="btn btn-ghost" @click="submitted = false">再发一条</button>
+            <h2>{{ $t('contact.form.successTitle') }}</h2>
+            <p>{{ $t('contact.form.successDesc', { name: form.name }) }}</p>
+            <button class="btn btn-ghost" @click="submitted = false">{{ $t('contact.form.again') }}</button>
           </div>
         </div>
 
         <div class="info">
           <div
             v-for="(c, i) in channels"
-            :key="c.label"
+            :key="i"
             v-tilt="6"
             class="info-item neon-card reveal"
             data-from="right"
@@ -121,8 +132,8 @@ onMounted(() => reveal(pageRoot.value))
           <div class="hours glass reveal" data-from="right" data-delay="0.2">
             <span class="hours__pulse" />
             <div>
-              <strong>客服在线中</strong>
-              <p>全年无休 · 平均响应 &lt; 5 分钟</p>
+              <strong>{{ $t('contact.hours.title') }}</strong>
+              <p>{{ $t('contact.hours.desc') }}</p>
             </div>
           </div>
         </div>

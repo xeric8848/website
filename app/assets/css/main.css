@@ -85,6 +85,24 @@ button {
   padding: 0 24px;
 }
 
+/* 多语言排版兜底：长英文单词允许换行，避免撑破容器 */
+h1,
+h2,
+h3,
+.section-title,
+.phero__title {
+  overflow-wrap: break-word;
+}
+
+/* 为中文设计的较大字间距在英文下会显得过松，按语言收敛 */
+:lang(en) .cn-title {
+  letter-spacing: 1px;
+}
+:lang(en) .section-title,
+:lang(en) .phero__title {
+  letter-spacing: -0.5px;
+}
+
 .section {
   position: relative;
   padding: 120px 0;
