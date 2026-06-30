@@ -1,0 +1,214 @@
+{
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "contact": "Contact",
+    "download": "Download App",
+    "menu": "Menu"
+  },
+  "lang": {
+    "switch": "Switch language",
+    "zh": "中文",
+    "en": "EN"
+  },
+  "backToTop": "Back to top",
+  "footer": {
+    "tagline": "The next-gen cloud gaming platform. One account, thousands of games, seamless play across every device.",
+    "games": {
+      "title": "Games",
+      "hot": "Top Charts",
+      "new": "New Releases",
+      "sale": "Limited Deals",
+      "free": "Free to Play"
+    },
+    "platform": {
+      "title": "Platform",
+      "about": "About Us",
+      "membership": "Membership",
+      "contact": "Contact",
+      "join": "Join Us"
+    },
+    "support": {
+      "title": "Support",
+      "help": "Help Center",
+      "dev": "Developer Partners"
+    },
+    "copyright": "© 2026 NEXUS Gaming · All rights reserved",
+    "icp": "ICP License 0000000 (demo)"
+  },
+  "hero": {
+    "learnMore": "Explore Platform",
+    "slides": [
+      {
+        "kicker": "Trending · Exclusive Launch",
+        "title": "Neon Abyss",
+        "desc": "Dive into a city that never sleeps and shoot your way through bullets and neon. Roguelike × bullet-hell — every run is a brand-new adventure.",
+        "cta": "Play Free",
+        "tags": ["Action Shooter", "Roguelike", "Multiplayer"]
+      },
+      {
+        "kicker": "Game of the Year · Open World",
+        "title": "Astral Rift",
+        "desc": "An epic open world spanning seven star systems. Pilot your ship to trade, fight, and uncover the ruins of unknown civilizations.",
+        "cta": "Enter the Stars",
+        "tags": ["Open World", "RPG", "Space"]
+      },
+      {
+        "kicker": "Esports Pick · Global Beta",
+        "title": "Mech Vanguard",
+        "desc": "5v5 team combat with one-of-a-kind mech warriors, where victory is decided in milliseconds. Top the global ranks and win the million-dollar pool.",
+        "cta": "Join the Battle",
+        "tags": ["MOBA", "Esports", "Team Combat"]
+      }
+    ]
+  },
+  "home": {
+    "popular": {
+      "eyebrow": "Popular Games",
+      "titlePre": "What Players Are",
+      "titleHl": "Playing This Week",
+      "more": "View Full Charts →"
+    },
+    "games": [
+      { "title": "Neon Abyss", "genre": "Action Shooter", "price": "Free", "badge": "Hot" },
+      { "title": "Astral Rift", "genre": "Open-World RPG", "price": "¥199", "badge": "New" },
+      { "title": "Mech Vanguard", "genre": "MOBA", "price": "Free", "badge": "" },
+      { "title": "Hyper Circuit", "genre": "Racing", "price": "¥98", "badge": "" },
+      { "title": "Shadow Forest", "genre": "Adventure", "price": "¥68", "badge": "-40%" },
+      { "title": "Throne Wars", "genre": "Strategy", "price": "Free", "badge": "" }
+    ],
+    "genresSection": {
+      "eyebrow": "Every Genre",
+      "titlePre": "There's Always One",
+      "titleHl": "Made for You"
+    },
+    "genres": [
+      { "name": "Action Shooter", "count": "1,280+" },
+      { "name": "Role-Playing", "count": "960+" },
+      { "name": "Racing", "count": "420+" },
+      { "name": "Strategy", "count": "730+" }
+    ],
+    "genreCount": "{count} games",
+    "stats": [
+      { "label": "Total Games" },
+      { "label": "Registered Players" },
+      { "label": "Concurrent Online" },
+      { "label": "Cloud Uptime" }
+    ],
+    "feat": {
+      "eyebrow": "Why NEXUS",
+      "titlePre": "Put the Arcade",
+      "titleHl": "in Your Pocket",
+      "sub": "Powerful cloud computing turns any device into a gaming console. Say goodbye to downloads, updates, and hardware worries — just enjoy the game.",
+      "chip1": "4K · 120FPS",
+      "chip2": "Latency < 15ms",
+      "imgAlt": "Cloud gaming",
+      "items": [
+        { "title": "Instant Cloud Play", "desc": "No downloads, no high-end specs — launch AAA titles instantly, streamed at up to 4K 120fps." },
+        { "title": "Cross-Device Relay", "desc": "Switch seamlessly across PC, phone, tablet, and TV, with progress synced to the cloud." },
+        { "title": "Achievements & Ranks", "desc": "A unified achievement system across the platform — top the global leaderboards and earn exclusive rewards." },
+        { "title": "Community & Squads", "desc": "Built-in voice, parties, streaming, and friend feeds — team up with millions of players." }
+      ]
+    },
+    "cta": {
+      "tag": "NEXUS+ Membership",
+      "titlePre": "Join",
+      "titleSuf": " and play the whole gaming universe",
+      "sub": "Dozens of new blockbusters every month — cloud play, exclusive discounts, and early access, all in one price.",
+      "priceUnit": "/ mo and up",
+      "trial": "Free 7-Day Trial ▶",
+      "contact": "Contact Us"
+    },
+    "ticker": ["Neon Abyss", "Astral Rift", "Mech Vanguard", "Hyper Circuit", "Shadow Forest", "Throne Wars", "Deep Space Hunter", "Pixel Hero"]
+  },
+  "about": {
+    "title": "About · NEXUS Gaming",
+    "hero": {
+      "eyebrow": "About NEXUS",
+      "titlePre": "Built for ",
+      "titleHl": "Players",
+      "titleSuf": "",
+      "sub": "NEXUS is a cloud gaming platform founded by hardcore gamers. We believe great games shouldn't be bound by hardware, downloads, or borders — whenever you want to play, play instantly, anywhere."
+    },
+    "mission": {
+      "eyebrow": "Our Mission",
+      "titleLine1": "Let everyone play",
+      "titleLine2": "the games they love",
+      "p1": "Playing AAA titles once meant expensive hardware, endless downloads, and constant updates. We broke through all of it with cloud computing.",
+      "p2": "Today, a single phone is your gaming console. This is a new era of gaming for every player.",
+      "badge": "Since 2018 · Global Team",
+      "imgAlt": "Game team"
+    },
+    "values": {
+      "eyebrow": "Values",
+      "title": "The four beliefs that drive us",
+      "items": [
+        { "title": "Players First", "desc": "Every decision starts with \"is this better for players?\"" },
+        { "title": "Peak Experience", "desc": "Push latency to the limit, push visuals to the peak." },
+        { "title": "Open Co-Creation", "desc": "Build with developers so great games reach more people." },
+        { "title": "Fair & Secure", "desc": "Anti-cheat and privacy protection guard a clean gaming space." }
+      ]
+    },
+    "timeline": {
+      "eyebrow": "Our Journey",
+      "title": "From a garage to the world",
+      "items": [
+        { "year": "2018", "text": "The team wrote its first line of streaming code in a garage — NEXUS was born." },
+        { "year": "2020", "text": "The cloud gaming beta launched, drawing in the first 100,000 players." },
+        { "year": "2022", "text": "NEXUS+ membership went live; the library surpassed 2,000 games." },
+        { "year": "2024", "text": "Hosted the first NEXUS global esports finals with a million-dollar pool." },
+        { "year": "2026", "text": "Players surpassed 120 million across 30+ global edge nodes." }
+      ]
+    },
+    "team": {
+      "eyebrow": "Core Team",
+      "title": "The people leading the way",
+      "members": [
+        { "name": "Rene", "role": "Founder & CEO" },
+        { "name": "Kayla", "role": "CTO · Cloud Architecture" },
+        { "name": "Mark", "role": "Director of Game Ecosystem" },
+        { "name": "Ella", "role": "Head of Community & Esports" }
+      ]
+    }
+  },
+  "contact": {
+    "title": "Contact · NEXUS Gaming",
+    "hero": {
+      "eyebrow": "Contact Us",
+      "titlePre": "Always ",
+      "titleHl": "Here for You",
+      "sub": "Whether it's a game issue, a partnership, or bringing your game to NEXUS — leave your details and we'll get back to you soon."
+    },
+    "form": {
+      "title": "Send us a message",
+      "hint": "Fields marked * are required",
+      "name": "Nickname *",
+      "namePlaceholder": "Your game ID / name",
+      "contact": "Contact *",
+      "contactPlaceholder": "Email / phone / Discord",
+      "topic": "Topic",
+      "message": "Message *",
+      "messagePlaceholder": "Briefly describe your question or idea…",
+      "submit": "Send Message ▶",
+      "validation": "Please fill in your nickname, contact, and message.",
+      "successTitle": "Got it!",
+      "successDesc": "Thanks {name}, our team will reach out to you soon.",
+      "again": "Send another"
+    },
+    "topics": ["Player Support", "Business", "Developer Onboarding", "Esports", "Other"],
+    "discord": "NEXUS Official Discord",
+    "channels": [
+      { "label": "Player Support", "note": "24/7 online" },
+      { "label": "Business", "note": "Brand / Channel" },
+      { "label": "Developers", "note": "Publishing" },
+      { "label": "Community", "note": "1.2M players" }
+    ],
+    "hours": {
+      "title": "Support online",
+      "desc": "Open year-round · Avg. response < 5 min"
+    }
+  },
+  "game": {
+    "play": "Play Now →"
+  }
+}

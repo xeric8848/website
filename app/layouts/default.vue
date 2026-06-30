@@ -1,13 +1,18 @@
 <script setup lang="ts">
 const route = useRoute()
+const { locale, setLocale } = useI18n()
 const scrolled = ref(false)
 const menuOpen = ref(false)
 
 const links = [
-  { to: '/', label: '首页' },
-  { to: '/about', label: '关于我们' },
-  { to: '/contact', label: '联系我们' },
+  { to: '/', key: 'home' },
+  { to: '/about', key: 'about' },
+  { to: '/contact', key: 'contact' },
 ]
+
+function toggleLang() {
+  setLocale(locale.value === 'zh' ? 'en' : 'zh')
+}
 
 function onScroll() {
   scrolled.value = window.scrollY > 30
@@ -25,6 +30,7 @@ onBeforeUnmount(() => window.removeEventListener('scroll', onScroll))
   <div class="app">
     <ScrollProgress />
     <CursorGlow />
+    <BackToTop />
 
     <header class="nav" :class="{ 'nav--solid': scrolled }">
       <div class="container nav__inner">
@@ -41,14 +47,24 @@ onBeforeUnmount(() => window.removeEventListener('scroll', onScroll))
             class="nav__link"
             :class="{ active: route.path === l.to }"
           >
-            {{ l.label }}
+            {{ $t('nav.' + l.key) }}
           </NuxtLink>
-          <button v-magnetic class="btn btn-primary nav__cta">下载客户端</button>
+          <button class="lang-toggle" :aria-label="$t('lang.switch')" @click="toggleLang">
+            <span class="lang-toggle__icon">🌐</span>
+            <span class="lang-toggle__text">{{ locale === 'zh' ? $t('lang.en') : $t('lang.zh') }}</span>
+          </button>
+          <button v-magnetic class="btn btn-primary nav__cta">{{ $t('nav.download') }}</button>
         </nav>
 
-        <button class="burger" :class="{ open: menuOpen }" aria-label="菜单" @click="menuOpen = !menuOpen">
-          <span /><span /><span />
-        </button>
+        <div class="nav__mobile">
+          <button class="lang-toggle lang-toggle--mobile" :aria-label="$t('lang.switch')" @click="toggleLang">
+            <span class="lang-toggle__icon">🌐</span>
+            <span class="lang-toggle__text">{{ locale === 'zh' ? $t('lang.en') : $t('lang.zh') }}</span>
+          </button>
+          <button class="burger" :class="{ open: menuOpen }" :aria-label="$t('nav.menu')" @click="menuOpen = !menuOpen">
+            <span /><span /><span />
+          </button>
+        </div>
       </div>
     </header>
 
@@ -63,36 +79,36 @@ onBeforeUnmount(() => window.removeEventListener('scroll', onScroll))
             <span class="brand__mark">N</span>
             <span class="brand__text">NEXUS<span class="brand__dot">.</span></span>
           </div>
-          <p>次世代云游戏平台。<br />一个账号，畅玩万款游戏，跨设备无缝接力。</p>
+          <p>{{ $t('footer.tagline') }}</p>
           <div class="socials">
             <a v-for="s in ['🎮', '💬', '📺', '🐦']" :key="s" href="#" class="social" data-cursor>{{ s }}</a>
           </div>
         </div>
 
         <div class="footer__col">
-          <h4>游戏</h4>
-          <NuxtLink to="/">热门榜单</NuxtLink>
-          <NuxtLink to="/">新品首发</NuxtLink>
-          <NuxtLink to="/">限时折扣</NuxtLink>
-          <NuxtLink to="/">免费畅玩</NuxtLink>
+          <h4>{{ $t('footer.games.title') }}</h4>
+          <NuxtLink to="/">{{ $t('footer.games.hot') }}</NuxtLink>
+          <NuxtLink to="/">{{ $t('footer.games.new') }}</NuxtLink>
+          <NuxtLink to="/">{{ $t('footer.games.sale') }}</NuxtLink>
+          <NuxtLink to="/">{{ $t('footer.games.free') }}</NuxtLink>
         </div>
         <div class="footer__col">
-          <h4>平台</h4>
-          <NuxtLink to="/about">关于我们</NuxtLink>
-          <NuxtLink to="/about">会员订阅</NuxtLink>
-          <NuxtLink to="/contact">联系我们</NuxtLink>
-          <NuxtLink to="/contact">加入我们</NuxtLink>
+          <h4>{{ $t('footer.platform.title') }}</h4>
+          <NuxtLink to="/about">{{ $t('footer.platform.about') }}</NuxtLink>
+          <NuxtLink to="/about">{{ $t('footer.platform.membership') }}</NuxtLink>
+          <NuxtLink to="/contact">{{ $t('footer.platform.contact') }}</NuxtLink>
+          <NuxtLink to="/contact">{{ $t('footer.platform.join') }}</NuxtLink>
         </div>
         <div class="footer__col">
-          <h4>支持</h4>
+          <h4>{{ $t('footer.support.title') }}</h4>
           <a href="mailto:support@nexus.gg">support@nexus.gg</a>
-          <NuxtLink to="/contact">帮助中心</NuxtLink>
-          <NuxtLink to="/contact">开发者合作</NuxtLink>
+          <NuxtLink to="/contact">{{ $t('footer.support.help') }}</NuxtLink>
+          <NuxtLink to="/contact">{{ $t('footer.support.dev') }}</NuxtLink>
         </div>
       </div>
       <div class="container footer__bottom">
-        <span>© 2026 NEXUS 游戏平台 · 保留所有权利</span>
-        <span>沪ICP备 0000000 号（demo）</span>
+        <span>{{ $t('footer.copyright') }}</span>
+        <span>{{ $t('footer.icp') }}</span>
       </div>
     </footer>
   </div>
@@ -163,9 +179,39 @@ onBeforeUnmount(() => window.removeEventListener('scroll', onScroll))
   margin-left: 12px;
   padding: 11px 22px;
   font-size: 14px;
+  white-space: nowrap;
+}
+.lang-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 8px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+.lang-toggle:hover {
+  color: var(--text);
+  border-color: var(--primary);
+  background: rgba(168, 130, 255, 0.1);
+}
+.lang-toggle__icon {
+  font-size: 14px;
+  line-height: 1;
+}
+.nav__mobile {
+  display: none;
+  align-items: center;
+  gap: 8px;
 }
 .burger {
-  display: none;
+  display: flex;
   flex-direction: column;
   gap: 5px;
   padding: 8px;
@@ -250,8 +296,12 @@ onBeforeUnmount(() => window.removeEventListener('scroll', onScroll))
 }
 
 @media (max-width: 768px) {
-  .burger {
+  .nav__mobile {
     display: flex;
+  }
+  /* 移动端用栏内独立的语言按钮，隐藏下拉菜单里的那个，避免重复 */
+  .nav__links .lang-toggle {
+    display: none;
   }
   .nav__links {
     position: fixed;
