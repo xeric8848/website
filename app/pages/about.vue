@@ -80,7 +80,7 @@ onMounted(() => reveal(pageRoot.value))
       <div class="container">
         <div class="head">
           <span class="eyebrow reveal">{{ $t('about.values.eyebrow') }}</span>
-          <h2 class="section-title reveal" data-delay="0.05">{{ $t('about.values.title') }}</h2>
+          <SplitText tag="h2" class="section-title" :text="$t('about.values.title')" />
         </div>
         <div class="values">
           <div
@@ -104,7 +104,7 @@ onMounted(() => reveal(pageRoot.value))
       <div class="container">
         <div class="head">
           <span class="eyebrow reveal">{{ $t('about.timeline.eyebrow') }}</span>
-          <h2 class="section-title reveal" data-delay="0.05">{{ $t('about.timeline.title') }}</h2>
+          <SplitText tag="h2" class="section-title" :text="$t('about.timeline.title')" />
         </div>
         <div class="timeline">
           <div
@@ -126,7 +126,7 @@ onMounted(() => reveal(pageRoot.value))
       <div class="container">
         <div class="head">
           <span class="eyebrow reveal">{{ $t('about.team.eyebrow') }}</span>
-          <h2 class="section-title reveal" data-delay="0.05">{{ $t('about.team.title') }}</h2>
+          <SplitText tag="h2" class="section-title" :text="$t('about.team.title')" />
         </div>
         <div class="team">
           <div

@@ -99,9 +99,12 @@ onMounted(() => {
         <div class="head">
           <div>
             <span class="eyebrow reveal">{{ $t('home.popular.eyebrow') }}</span>
-            <h2 class="section-title reveal" data-delay="0.05">
-              {{ $t('home.popular.titlePre') }}<span class="gradient-text">{{ $t('home.popular.titleHl') }}</span>
-            </h2>
+            <SplitText
+              tag="h2"
+              class="section-title"
+              :pre="$t('home.popular.titlePre')"
+              :hl="$t('home.popular.titleHl')"
+            />
           </div>
           <NuxtLink to="/" class="head__more reveal" data-delay="0.1">{{ $t('home.popular.more') }}</NuxtLink>
         </div>
@@ -126,9 +129,12 @@ onMounted(() => {
         <div class="head">
           <div>
             <span class="eyebrow reveal">{{ $t('home.genresSection.eyebrow') }}</span>
-            <h2 class="section-title reveal" data-delay="0.05">
-              {{ $t('home.genresSection.titlePre') }}<span class="gradient-text">{{ $t('home.genresSection.titleHl') }}</span>
-            </h2>
+            <SplitText
+              tag="h2"
+              class="section-title"
+              :pre="$t('home.genresSection.titlePre')"
+              :hl="$t('home.genresSection.titleHl')"
+            />
           </div>
         </div>
         <div class="genres">
@@ -172,9 +178,13 @@ onMounted(() => {
       <div class="container feat">
         <div class="feat__text">
           <span class="eyebrow reveal">{{ $t('home.feat.eyebrow') }}</span>
-          <h2 class="section-title reveal" data-delay="0.05">
-            {{ $t('home.feat.titlePre') }}<br /><span class="gradient-text">{{ $t('home.feat.titleHl') }}</span>
-          </h2>
+          <SplitText
+            tag="h2"
+            class="section-title"
+            stack
+            :pre="$t('home.feat.titlePre')"
+            :hl="$t('home.feat.titleHl')"
+          />
           <p class="section-sub reveal" data-delay="0.1">
             {{ $t('home.feat.sub') }}
           </p>
@@ -216,7 +226,12 @@ onMounted(() => {
           <ParticleField :density="50" />
           <div class="cta__inner">
             <span class="tag" style="margin-bottom: 16px">{{ $t('home.cta.tag') }}</span>
-            <h2>{{ $t('home.cta.titlePre') }} <span class="gradient-text">NEXUS+</span>{{ $t('home.cta.titleSuf') }}</h2>
+            <SplitText
+              tag="h2"
+              :pre="$t('home.cta.titlePre') + ' '"
+              hl="NEXUS+"
+              :suf="$t('home.cta.titleSuf')"
+            />
             <p>{{ $t('home.cta.sub') }}</p>
             <div class="cta__price">
               <span class="cta__num">￥38</span>
