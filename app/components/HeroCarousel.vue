@@ -16,7 +16,7 @@ interface Slide {
 const { t, tm, rt } = useI18n()
 
 const img = (id: string, w: number) =>
-  `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&q=80&w=${w}`
+  `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&q=70&w=${w}`
 
 // 非文案元数据保留在代码里，文案从 i18n 按索引取
 const slideMeta = [
@@ -57,8 +57,8 @@ useHead({
     {
       rel: 'preload',
       as: 'image',
-      href: img(firstImg, 1600),
-      imagesrcset: `${img(firstImg, 1200)} 1200w, ${img(firstImg, 1600)} 1600w`,
+      href: img(firstImg, 1920),
+      imagesrcset: `${img(firstImg, 1280)} 1280w, ${img(firstImg, 1920)} 1920w`,
       imagesizes: '100vw',
       fetchpriority: 'high',
     },
@@ -107,32 +107,32 @@ function resume() {
   if (started) start()
 }
 
-// 首次用户交互前不自动轮播：让首屏稳定停在第 1 张。
-// 自动切图会在 LCP 测量窗口内不断绘制更大的标题/图片，成为新的 LCP 候选，
-// 把 LCP 时间戳一路推到十几秒。停在首图后：
-//   - 无头跑分（Lighthouse/PSI 无交互）LCP = 首图绘制（~亚秒级）；
-//   - 真实用户的首次点击/触摸本身就会定格 LCP，之后再切图也不影响分数。
-const KICK_EVENTS = ['pointerdown', 'keydown', 'wheel', 'touchstart'] as const
-function kickoff() {
-  removeKickListeners()
-  start()
+// 首图之后再预载其余 slide：避免和 LCP 首图抢带宽，又能让自动轮播切换顺滑。
+// 三张图渲染尺寸完全一致，即便提前加载也不会成为"更大"的 LCP 候选。
+let restTimer: ReturnType<typeof setTimeout> | null = null
+function preloadRest() {
+  slideMeta.forEach((_, i) => ensureLoaded(i))
 }
-function addKickListeners() {
-  KICK_EVENTS.forEach((e) =>
-    window.addEventListener(e, kickoff, { once: true, passive: true })
-  )
-}
-function removeKickListeners() {
-  KICK_EVENTS.forEach((e) => window.removeEventListener(e, kickoff))
+function schedulePreloadRest() {
+  const run = () => {
+    const ric = (window as any).requestIdleCallback
+    if (ric) ric(preloadRest, { timeout: 2000 })
+    else restTimer = setTimeout(preloadRest, 1200)
+  }
+  if (document.readyState === 'complete') run()
+  else window.addEventListener('load', run, { once: true })
 }
 
 onMounted(() => {
   animateIn()
-  addKickListeners()
+  schedulePreloadRest()
+  // 自动轮播：满屏首图是稳定的 LCP 元素，三张图尺寸一致，
+  // 切图不会画出"更大"的内容，因此自动播放不会刷新/推后 LCP。
+  start()
 })
 onBeforeUnmount(() => {
   stop()
-  removeKickListeners()
+  if (restTimer) clearTimeout(restTimer)
 })
 </script>
 
@@ -148,8 +148,8 @@ onBeforeUnmount(() => {
       <img
         v-if="loaded.has(i)"
         class="slide__img"
-        :src="img(s.image, 1600)"
-        :srcset="`${img(s.image, 1200)} 1200w, ${img(s.image, 1600)} 1600w`"
+        :src="img(s.image, 1920)"
+        :srcset="`${img(s.image, 1280)} 1280w, ${img(s.image, 1920)} 1920w`"
         sizes="100vw"
         :alt="s.title"
         :loading="i === 0 ? 'eager' : 'lazy'"
