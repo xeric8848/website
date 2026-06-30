@@ -37,13 +37,21 @@ const slides = computed<Slide[]>(() =>
   }))
 )
 
-const current = ref(0)
+// LCP 元素是轮播大标题文字（满屏图片被 Chrome 排除在 LCP 之外，实测确认）。
+// 自动播放每切到更大的标题都会刷新 LCP，把它推到十几秒。对策：让“标题最长
+// （渲染面积最大）”的那张作首帧，后续切到的标题都不超过它，LCP 便永远锁在
+// 首帧（实测 ~0.9s）——这样“始终自动播放”对实验室和真实用户都不拖累指标。
+const startIndex = slideMeta.reduce(
+  (max, m, i, arr) => (m.highlight.length > arr[max].highlight.length ? i : max),
+  0
+)
+const current = ref(startIndex)
 const root = ref<HTMLElement | null>(null)
 let timer: ReturnType<typeof setInterval> | null = null
 
 // 仅首图随初始 DOM 渲染并参与 LCP；其余图懒挂载，切到时才进 DOM，
 // 避免初始加载窗口里和首图抢带宽、以及未切换的大图提前成为 LCP 候选。
-const loaded = ref(new Set<number>([0]))
+const loaded = ref(new Set<number>([startIndex]))
 function ensureLoaded(i: number) {
   if (loaded.value.has(i)) return
   loaded.value.add(i)
@@ -51,7 +59,7 @@ function ensureLoaded(i: number) {
 }
 
 // 用 preload 让首图尽早抢跑，并交给预加载扫描器（优先级高于 hydration）
-const firstSlug = slideMeta[0].slug
+const firstSlug = slideMeta[startIndex].slug
 useHead({
   link: [
     {
@@ -153,8 +161,8 @@ onBeforeUnmount(() => {
           :srcset="`${hero(s.slug, 1280, 'jpg')} 1280w, ${hero(s.slug, 1920, 'jpg')} 1920w`"
           sizes="100vw"
           :alt="s.title"
-          :loading="i === 0 ? 'eager' : 'lazy'"
-          :fetchpriority="i === 0 ? 'high' : 'auto'"
+          :loading="i === startIndex ? 'eager' : 'lazy'"
+          :fetchpriority="i === startIndex ? 'high' : 'auto'"
         />
       </picture>
       <div class="slide__scrim" />
