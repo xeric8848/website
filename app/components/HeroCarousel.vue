@@ -9,20 +9,21 @@ interface Slide {
   cta: string
   tags: string[]
   rating: string
-  image: string
+  slug: string
   bg: string
 }
 
 const { t, tm, rt } = useI18n()
 
-const img = (id: string, w: number) =>
-  `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&q=70&w=${w}`
+// 本地图片：/public/images/hero/<slug>-<宽>.<webp|jpg>，已统一裁成 16:9 并压缩
+const hero = (slug: string, w: number, ext: 'webp' | 'jpg') =>
+  `/images/hero/${slug}-${w}.${ext}`
 
 // 非文案元数据保留在代码里，文案从 i18n 按索引取
 const slideMeta = [
-  { highlight: 'NEON ABYSS', rating: '9.6', image: '1538481199705-c710c4e965fc', bg: 'linear-gradient(135deg, #1a0b2e, #07060f)' },
-  { highlight: 'ASTRAL RIFT', rating: '9.8', image: '1593305841991-05c297ba4575', bg: 'linear-gradient(135deg, #0b1a2e, #07060f)' },
-  { highlight: 'MECH VANGUARD', rating: '9.4', image: '1511512578047-dfb367046420', bg: 'linear-gradient(135deg, #2e0b1f, #07060f)' },
+  { highlight: 'NEON ABYSS', rating: '9.6', slug: 'neon-abyss', bg: 'linear-gradient(135deg, #1a0b2e, #07060f)' },
+  { highlight: 'ASTRAL RIFT', rating: '9.8', slug: 'astral-rift', bg: 'linear-gradient(135deg, #0b1a2e, #07060f)' },
+  { highlight: 'MECH VANGUARD', rating: '9.4', slug: 'mech-vanguard', bg: 'linear-gradient(135deg, #2e0b1f, #07060f)' },
 ]
 
 const slides = computed<Slide[]>(() =>
@@ -39,7 +40,6 @@ const slides = computed<Slide[]>(() =>
 const current = ref(0)
 const root = ref<HTMLElement | null>(null)
 let timer: ReturnType<typeof setInterval> | null = null
-let started = false
 
 // 仅首图随初始 DOM 渲染并参与 LCP；其余图懒挂载，切到时才进 DOM，
 // 避免初始加载窗口里和首图抢带宽、以及未切换的大图提前成为 LCP 候选。
@@ -51,14 +51,15 @@ function ensureLoaded(i: number) {
 }
 
 // 用 preload 让首图尽早抢跑，并交给预加载扫描器（优先级高于 hydration）
-const firstImg = slideMeta[0].image
+const firstSlug = slideMeta[0].slug
 useHead({
   link: [
     {
       rel: 'preload',
       as: 'image',
-      href: img(firstImg, 1920),
-      imagesrcset: `${img(firstImg, 1280)} 1280w, ${img(firstImg, 1920)} 1920w`,
+      type: 'image/webp',
+      href: hero(firstSlug, 1920, 'webp'),
+      imagesrcset: `${hero(firstSlug, 1280, 'webp')} 1280w, ${hero(firstSlug, 1920, 'webp')} 1920w`,
       imagesizes: '100vw',
       fetchpriority: 'high',
     },
@@ -93,7 +94,6 @@ function next() {
 }
 function start() {
   stop()
-  started = true
   timer = setInterval(next, 7000)
 }
 function stop() {
@@ -101,10 +101,6 @@ function stop() {
     clearInterval(timer)
     timer = null
   }
-}
-// 鼠标移出时只在已启动过的情况下恢复，避免首次交互前被 mouseleave 误启动
-function resume() {
-  if (started) start()
 }
 
 // 首图之后再预载其余 slide：避免和 LCP 首图抢带宽，又能让自动轮播切换顺滑。
@@ -137,7 +133,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <section ref="root" class="hero" @mouseenter="stop" @mouseleave="resume">
+  <section ref="root" class="hero">
     <div
       v-for="(s, i) in slides"
       :key="i"
@@ -145,16 +141,22 @@ onBeforeUnmount(() => {
       :class="{ 'is-active': i === current }"
       :style="{ background: s.bg }"
     >
-      <img
-        v-if="loaded.has(i)"
-        class="slide__img"
-        :src="img(s.image, 1920)"
-        :srcset="`${img(s.image, 1280)} 1280w, ${img(s.image, 1920)} 1920w`"
-        sizes="100vw"
-        :alt="s.title"
-        :loading="i === 0 ? 'eager' : 'lazy'"
-        :fetchpriority="i === 0 ? 'high' : 'auto'"
-      />
+      <picture v-if="loaded.has(i)">
+        <source
+          type="image/webp"
+          :srcset="`${hero(s.slug, 1280, 'webp')} 1280w, ${hero(s.slug, 1920, 'webp')} 1920w`"
+          sizes="100vw"
+        />
+        <img
+          class="slide__img"
+          :src="hero(s.slug, 1920, 'jpg')"
+          :srcset="`${hero(s.slug, 1280, 'jpg')} 1280w, ${hero(s.slug, 1920, 'jpg')} 1920w`"
+          sizes="100vw"
+          :alt="s.title"
+          :loading="i === 0 ? 'eager' : 'lazy'"
+          :fetchpriority="i === 0 ? 'high' : 'auto'"
+        />
+      </picture>
       <div class="slide__scrim" />
       <div class="slide__scan" />
 
