@@ -58,7 +58,7 @@ useHead({
       rel: 'preload',
       as: 'image',
       href: img(firstImg, 1600),
-      imagesrcset: `${img(firstImg, 1200)} 1200w, ${img(firstImg, 1600)} 1600w, ${img(firstImg, 2000)} 2000w`,
+      imagesrcset: `${img(firstImg, 1200)} 1200w, ${img(firstImg, 1600)} 1600w`,
       imagesizes: '100vw',
       fetchpriority: 'high',
     },
@@ -127,7 +127,7 @@ onBeforeUnmount(() => {
         v-if="loaded.has(i)"
         class="slide__img"
         :src="img(s.image, 1600)"
-        :srcset="`${img(s.image, 1200)} 1200w, ${img(s.image, 1600)} 1600w, ${img(s.image, 2000)} 2000w`"
+        :srcset="`${img(s.image, 1200)} 1200w, ${img(s.image, 1600)} 1600w`"
         sizes="100vw"
         :alt="s.title"
         :loading="i === 0 ? 'eager' : 'lazy'"
