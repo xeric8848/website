@@ -26,6 +26,10 @@
 
 html {
   scroll-behavior: smooth;
+  /* reveal 动画在元素滚入视口前会停在 x:±60 的横向偏移上，
+     真正的滚动容器是 html，必须在此裁剪横向溢出，否则整页会被撑宽。
+     用 clip 而非 hidden，避免把 html 变成滚动容器干扰 ScrollTrigger。 */
+  overflow-x: clip;
 }
 
 body {
